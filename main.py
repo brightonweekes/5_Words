@@ -1,21 +1,21 @@
 # Import libraries including set of english words
 from time import monotonic
-from english_words import get_english_words_set
+import numpy as np 
+import pandas as pd 
 
 # Begin the timer 
 start = monotonic()
 
 # Create a set of all english words
-web2lowerset = get_english_words_set(['gcide'], alpha= True, lower=True)
+lowerset = pd.read_table('words_alpha.txt', header=None, delimiter=None)[0].to_list()
 
 # Create a list containing all five letter words from the set
 uniques0 = []
-for word in web2lowerset:
-    if len(word) == 5:
-        uniques0.append(word)
+for word in lowerset:
+    if type(word) == str:
+        if len(word) == 5:
+            uniques0.append(word)
 
-uniques0.append('gucks')    # I have added these two words because the list that I am currently using seems to have no solutions
-uniques0.append('vibex')    # Please let me know if I am mistaken
 
 # Define words in the english alphabet which will be used to detect words with repeated letters
 letters = {'a','b','c','d','e','f','g','h','i','j','k','l','m',
@@ -30,10 +30,6 @@ for word in uniques0:
 
 for word in set(repeats):
     uniques0.remove(word)
-
-uniques0.sort()
-uniques0.pop(0)     # Removes the word '100th'
-
 
 # Main program
 unique_word_sets = []
