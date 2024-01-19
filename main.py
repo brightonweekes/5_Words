@@ -1,7 +1,7 @@
 # Import libraries including set of english words
 from time import monotonic
-import numpy as np 
 import pandas as pd 
+from multiprocessing import Pool
 
 # Begin the timer 
 start = monotonic()
@@ -90,5 +90,8 @@ for word in uniques0:
     word_x += 1           
     print(f'{word_x}/{len(uniques0)} words completed')
 
+
+
 print(unique_word_sets)
+print(len(unique_word_sets))
 print('\nThis code ran in ' + str(round(monotonic() - start, 3)) + ' seconds')
