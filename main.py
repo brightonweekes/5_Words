@@ -100,7 +100,7 @@ if __name__ == '__main__':
     returns = manager.list()
     returns.append(0)       # Used for total counter
     jobs = []
-    p = multiprocessing.Process(target=main, args=(uniques0, 0, 400, returns))
+    p = multiprocessing.Process(target=main, args=(uniques0, 0, 700, returns))
     jobs.append(p)
     p.start()
 
@@ -128,7 +128,7 @@ if __name__ == '__main__':
     jobs.append(p7)
     p7.start()
 
-    p8 = multiprocessing.Process(target=main, args=(uniques0, 5000, 10175, returns))
+    p8 = multiprocessing.Process(target=main, args=(uniques0, 5500, 10175, returns))
     jobs.append(p8)
     p8.start()
     
