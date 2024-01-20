@@ -1,7 +1,7 @@
 # Import libraries including set of english words
 from time import monotonic
 import pandas as pd 
-from multiprocessing import Pool
+import multiprocessing
 
 # Begin the timer 
 start = monotonic()
@@ -33,65 +33,106 @@ for word in set(repeats):
 
 # Main program
 unique_word_sets = []
+completion = 0
 
-word_x = 0      # Creates a counter which keeps track of the index of the current word
-for word in uniques0:       
-    uniques1 = []
-    for following_word in range(word_x + 1, len(uniques0)):     # Loops over the words in the list following the current word
-        unique_letters = True                                       # Detects if the current word shares any letter with the following word
-        for letter in uniques0[following_word]:
-            if letter in word:
-                unique_letters = False
-        if unique_letters:      # Apppends unique words as a list to procede the the nex tinstance of this function
-            uniques1.append(uniques0[following_word])
-    
-    # The following three paragraphs are recursive off the previous
-    word2_x = 0
-    for word2 in uniques1:
-        uniques2 = []
-        for following_word in range(word2_x + 1, len(uniques1)):
-            unique_letters = True
-            for letter in uniques1[following_word]:
-                if letter in word2:
+
+def main(uniques0, start_x, end_x, returns):
+    word_x = start_x     # Creates a counter which keeps track of the index of the current word
+    for word in uniques0[start_x:end_x]:       
+        uniques1 = []
+        for following_word in range(word_x + 1, len(uniques0)):     # Loops over the words in the list following the current word
+            unique_letters = True                                       # Detects if the current word shares any letter with the following word
+            for letter in uniques0[following_word]:
+                if letter in word:
                     unique_letters = False
-            if unique_letters:
-                uniques2.append(uniques1[following_word])
+            if unique_letters:      # Apppends unique words as a list to procede the the next instance of this function
+                uniques1.append(uniques0[following_word])
         
-
-        word3_x = 0
-        for word3 in uniques2:
-            uniques3 = []
-            for following_word in range(word3_x + 1, len(uniques2)):
+        # The following three paragraphs are recursive off the previous
+        word2_x = 0
+        for word2 in uniques1:
+            uniques2 = []
+            for following_word in range(word2_x + 1, len(uniques1)):
                 unique_letters = True
-                for letter in uniques2[following_word]:
-                    if letter in word3:
+                for letter in uniques1[following_word]:
+                    if letter in word2:
                         unique_letters = False
                 if unique_letters:
-                    uniques3.append(uniques2[following_word])
+                    uniques2.append(uniques1[following_word])
+            
 
-
-            word4_x = 0
-            for word4 in uniques3:
-                uniques4 = []
-                for following_word in range(word4_x + 1, len(uniques3)):
+            word3_x = 0
+            for word3 in uniques2:
+                uniques3 = []
+                for following_word in range(word3_x + 1, len(uniques2)):
                     unique_letters = True
-                    for letter in uniques3[following_word]:
-                        if letter in word4:
+                    for letter in uniques2[following_word]:
+                        if letter in word3:
                             unique_letters = False
                     if unique_letters:
-                        uniques4.append(uniques3[following_word])
+                        uniques3.append(uniques2[following_word])
 
-                for word5 in uniques4:
-                    unique_word_sets.append((word, word2, word3, word4, word5))
+                word4_x = 0
+                for word4 in uniques3:
+                    uniques4 = []
+                    for following_word in range(word4_x + 1, len(uniques3)):
+                        unique_letters = True
+                        for letter in uniques3[following_word]:
+                            if letter in word4:
+                                unique_letters = False
+                        if unique_letters:
+                            uniques4.append(uniques3[following_word])
 
-                word4_x += 1
-            word3_x += 1
-        word2_x += 1
-    word_x += 1           
-    print(f'{word_x}/{len(uniques0)} words completed')
+                    for word5 in uniques4:
+                        returns.append((word, word2, word3, word4, word5))
+
+                    word4_x += 1
+                word3_x += 1
+            word2_x += 1
+        word_x += 1    
+        returns[0] += 1
+        print(f'{returns[0]}/{len(uniques0)} words completed')
+    print('process finished==================')
 
 
+if __name__ == '__main__':
+    manager = multiprocessing.Manager()
+    returns = manager.list()
+    returns.append(0)       # Used for total counter
+    jobs = []
+    p = multiprocessing.Process(target=main, args=(uniques0, 0, 400, returns))
+    jobs.append(p)
+    p.start()
 
-print(unique_word_sets)
-print(len(unique_word_sets))
-print('\nThis code ran in ' + str(round(monotonic() - start, 3)) + ' seconds')
+    p2 = multiprocessing.Process(target=main, args=(uniques0, 700, 1400, returns))
+    jobs.append(p2)
+    p2.start()
+
+    p3 = multiprocessing.Process(target=main, args=(uniques0, 1400, 2300, returns))
+    jobs.append(p3)
+    p3.start()
+    
+    p4 = multiprocessing.Process(target=main, args=(uniques0, 2300, 3225, returns))
+    jobs.append(p4)
+    p4.start()
+
+    p5 = multiprocessing.Process(target=main, args=(uniques0, 3225, 4000, returns))
+    jobs.append(p5)
+    p5.start()
+
+    p6 = multiprocessing.Process(target=main, args=(uniques0, 4000, 4700, returns))
+    jobs.append(p6)
+    p6.start()
+
+    p7 = multiprocessing.Process(target=main, args=(uniques0, 4700, 5500, returns))
+    jobs.append(p7)
+    p7.start()
+
+    p8 = multiprocessing.Process(target=main, args=(uniques0, 5000, 10175, returns))
+    jobs.append(p8)
+    p8.start()
+    
+    for job in jobs:
+        job.join()
+    print(returns)
+    print('\nThis code ran in ' + str(round(monotonic() - start, 3)) + ' seconds')
